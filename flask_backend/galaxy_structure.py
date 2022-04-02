@@ -64,7 +64,6 @@ def get_routes_data(falcon_path: str) -> list:
     #open a connection to routes database
     falcon_data = open_json(falcon_path)
     path_root = remove_path_tail(falcon_path) 
-    print('{}{}'.format(path_root, falcon_data['routes_db']))
     db_connection = sqlite3.connect('{}{}'.format(path_root, falcon_data['routes_db']))
     db_cursor = db_connection.cursor()
     # get table name from db, assuming required table is first table in db
