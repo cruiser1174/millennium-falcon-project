@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_backend.galaxy_structure import generate_galaxy
+from galaxy_structure import generate_galaxy
 from test_scan import get_all_json_files
 
 galaxy_api = Flask(__name__)
@@ -18,13 +18,13 @@ paths = {
 @galaxy_api.route('/galaxy-api')
 def send_galaxy():
     api_data = {}
-    galaxy_data = get_all_json_files(paths['galaxies'])
-    for galaxy_name in galaxy_data:
-        galaxy = generate_galaxy('{}\\{}.json'.format(paths['galaxies'], galaxy_name))
-        galaxy_data[galaxy_name]['planets'] = galaxy.planets
-        del galaxy_data['routes_db']
+    #galaxy_data = get_all_json_files(paths['galaxies'])
+    #for galaxy_name in galaxy_data:
+    #    galaxy = generate_galaxy('{}\\{}.json'.format(paths['galaxies'], galaxy_name))
+    #    galaxy_data[galaxy_name]['planets'] = galaxy.planets
+    #    del galaxy_data['routes_db']
     
-    api_data['galaxies'] = galaxy_data
+    #api_data['galaxies'] = galaxy_data
     api_data['scenarios'] = get_all_json_files(paths['scenarios'])
     return api_data
 
