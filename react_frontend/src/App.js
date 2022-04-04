@@ -9,6 +9,9 @@ function App() {
   const [selectedGalaxy, setSelectedGalaxy] = useState(null);
   const [selectedScenario, setSelectedScenario] = useState(null);
   const [odds, setOdds] = useState(null);
+  const [route, setRoute] = useState(null);
+  const [days, setDays] = useState(null);
+  const getOddsEffect = 0;
 
   useEffect(() => {
     fetch('/galaxy-api').then(result => result.json()).then(data => {
@@ -46,19 +49,38 @@ function App() {
   //  updateSelectedGalaxy(Object.keys(galaxies)[0])
   //};
 
-  function calculateOdds() {
+  async function calculateOdds() {
     const dataToPost = {
       galaxy: selectedGalaxy,
       scenario: scenarios[selectedScenario]
     };
 
-    axios.post('/calculate-odds-api', dataToPost).then( function (response) {
-      console.log(response);
-    }).catch(function (error) {
-      console.log(error)
+    await axios.post('/calculate-odds-api', dataToPost).then(result => result.json()).then(data => {
+      setOdds(data);
     });
+  };
 
-  }
+  async function getOdds() {
+    await fetch(
+      '/calculate-odds-api').then(
+        result => result.json()).then(
+          data => {setOdds(data);
+    });
+  };
+
+  function makeOdds() {
+    const dataToPost = {
+      galaxy: selectedGalaxy,
+      scenario: scenarios[selectedScenario]
+    };
+
+    axios.post('/calculate-odds-api', dataToPost).then(
+      response => {
+        setOdds(response.data.odds);
+        setRoute(response.data.path);
+        setDays(response.data.days)
+      });
+  };
 
   if (!galaxies && !scenarios) {
     return (
@@ -99,8 +121,10 @@ function App() {
             <p> Time Limit: {scenarios[selectedScenario].countdown} </p>
           </div>}
   
-          <button onClick={calculateOdds}>Calculate Odds</button>
+          <button onClick={makeOdds}>Calculate Odds</button>
           {odds && <p>Odds of success: {odds}</p>}
+          {route && <p>Route: {route}</p>}
+          {days && <p>Days: {days}</p>}
   
           
         </header>
