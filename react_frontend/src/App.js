@@ -11,7 +11,7 @@ function App() {
   const [odds, setOdds] = useState(null);
   const [route, setRoute] = useState(null);
   const [days, setDays] = useState(null);
-  const getOddsEffect = 0;
+  const [file, setFile] = useState()
 
   useEffect(() => {
     fetch('/galaxy-api').then(result => result.json()).then(data => {
@@ -49,25 +49,6 @@ function App() {
   //  updateSelectedGalaxy(Object.keys(galaxies)[0])
   //};
 
-  async function calculateOdds() {
-    const dataToPost = {
-      galaxy: selectedGalaxy,
-      scenario: scenarios[selectedScenario]
-    };
-
-    await axios.post('/calculate-odds-api', dataToPost).then(result => result.json()).then(data => {
-      setOdds(data);
-    });
-  };
-
-  async function getOdds() {
-    await fetch(
-      '/calculate-odds-api').then(
-        result => result.json()).then(
-          data => {setOdds(data);
-    });
-  };
-
   function makeOdds() {
     const dataToPost = {
       galaxy: selectedGalaxy,
@@ -80,6 +61,44 @@ function App() {
         setRoute(response.data.path);
         setDays(response.data.days)
       });
+  };
+
+  async function getExistingData() {
+    const response = await axios.get('/galaxy-api');
+    return response.data
+  };
+
+  async function createOdds() {
+
+    const dataToPost = {
+      galaxy: selectedGalaxy,
+      scenario: scenarios[selectedScenario]
+    };
+
+    const response = await axios.post('/calculate-odds-api', dataToPost);
+    setOdds(response.data.odds);
+    setRoute(response.data.path);
+    setDays(response.data.days)
+  };
+
+  function handleUpload(event) {
+    setFile(event.target.files[0])
+  };
+
+  function handleSubmit(event) {
+    event.preventDefault()
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('fileName', file.name);
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data',
+      },
+    };
+    axios.post('/upload-scenario-api', formData, config).then((response) => {
+      console.log(response.data);
+    });
+
   };
 
   if (!galaxies && !scenarios) {
@@ -99,6 +118,12 @@ function App() {
   
           <p>Choose a scenario:</p>
           {scenarios && <Dropdown items={Object.keys(scenarios)} onChange={updateSelectedScenario} />}
+
+          <form onSubmit={handleSubmit}>
+            <p>Or upload a new scenario:</p>
+            <input type="file" onChange={handleUpload}/>
+            <button type="submit">Upload</button>
+        </form>
   
           {selectedGalaxy && 
           <div>
@@ -121,7 +146,7 @@ function App() {
             <p> Time Limit: {scenarios[selectedScenario].countdown} </p>
           </div>}
   
-          <button onClick={makeOdds}>Calculate Odds</button>
+          <button onClick={createOdds}>Calculate Odds</button>
           {odds && <p>Odds of success: {odds}</p>}
           {route && <p>Route: {route}</p>}
           {days && <p>Days: {days}</p>}
