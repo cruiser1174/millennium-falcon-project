@@ -7,8 +7,12 @@ import { useAlert } from 'react-alert';
 function App() {
   const [galaxies, setGalaxies] = useState(null);
   const [scenarios, setScenarios] = useState(null);
+  const [selectedNeighborData, setSelectedNeighborData] = useState(null);
   const [selectedGalaxy, setSelectedGalaxy] = useState(null);
+  const [selectedGalaxyPlanets, setSelectedGalaxyPlanets] = useState(null);
   const [selectedScenario, setSelectedScenario] = useState(null);
+  const [selectedScenarioPlanets, setSelectedScenarioPlanets] = useState(null);
+  const [selectedScenarioDays, setSelectedScenarioDays] = useState(null);
   const [odds, setOdds] = useState(null);
   const [route, setRoute] = useState(null);
   const [days, setDays] = useState(null);
@@ -17,11 +21,6 @@ function App() {
   useEffect(() => {
     fetch('/galaxy-api').then(result => result.json()).then(data => {
       setGalaxies(data.galaxies);
-    });
-  }, []);
-
-  useEffect(() => {
-    fetch('/galaxy-api').then(result => result.json()).then(data => {
       setScenarios(data.scenarios);
     });
   }, []);
@@ -40,17 +39,29 @@ function App() {
 
   function updateSelectedGalaxy(newGalaxy) {
     setSelectedGalaxy(newGalaxy);
+    updateSelectedGalaxyPlanets(galaxies[newGalaxy].planets);
+    setSelectedNeighborData(galaxies[newGalaxy].neighbors);
+  };
+
+  function updateSelectedGalaxyPlanets(newPlanets) {
+    setSelectedGalaxyPlanets(newPlanets);
   };
 
   function updateSelectedScenario(newScenario) {
     setSelectedScenario(newScenario);
+    updateSelectedScenarioPlanets(Object.keys(scenarios[newScenario].planets));
+    setSelectedScenarioDays(scenarios[newScenario].planets);
+  };
+
+  function updateSelectedScenarioPlanets(newPlanets) {
+    setSelectedScenarioPlanets(newPlanets);
   };
 
   async function getOdds() {
 
     const dataToPost = {
       galaxy: selectedGalaxy,
-      scenario: scenarios[selectedScenario]
+      scenario: selectedScenario
     };
 
     const response = await axios.post('/calculate-odds-api', dataToPost);
@@ -74,17 +85,33 @@ function App() {
       },
     };
     axios.post('/upload-scenario-api', formData, config).then((response) => {
-      alert(response.data.alert);
       setScenarios(response.data.scenarios);
+      alert(response.data.alert);
     });
 
   };
 
-  if (!galaxies && !scenarios) {
+  if (!galaxies || !scenarios) {
     return (
       <div className="App">
         <header className="App-header">
-          <p>Loading...</p>
+          <p>Loading Galaxies and Scenarios...</p>
+        </header>
+      </div>
+    );
+  } else if (!galaxies) {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <p>Loading Galaxies...</p>
+        </header>
+      </div>
+    );
+  } else if (!scenarios) {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <p>Loading Scenarios...</p>
         </header>
       </div>
     );
@@ -123,7 +150,42 @@ function App() {
           <div>
             <p> Selected Scenario: {selectedScenario} </p>
             <p> Time Limit: {scenarios[selectedScenario].countdown} </p>
+            <p> Planets in Scenario: 
+              <ul>
+                {Object.keys(scenarios[selectedScenario].planets).map(planet => (
+                  <li>{planet}</li>
+                ))}
+              </ul>
+            </p>
+            <p>planets in scenario: {selectedScenarioPlanets}</p>
+            <p>type: {typeof(selectedScenarioPlanets)}</p>
+            <p>planets in galaxy: {selectedGalaxyPlanets}</p>
+            <p>type: {typeof(selectedGalaxyPlanets)}</p>
+            <p>neighbors: {JSON.stringify(selectedNeighborData)}</p>
           </div>}
+
+          {(selectedGalaxy && selectedScenario && selectedScenarioPlanets.every(planet => selectedGalaxyPlanets.includes(planet))) ?
+            (<table>
+              <tr>
+                <th>Planet</th>
+                <th>Neighbors</th>
+                <th>Days with bounty hunters</th>
+              </tr>
+              <tbody>
+                {galaxies[selectedGalaxy].planets.map(planet => (
+                  <tr>
+                    <td>{planet}</td>
+                    <td>
+                      {Object.keys(galaxies[selectedGalaxy].neighbors[planet]).map(neighbor => (
+                        <p>{neighbor} ({galaxies[selectedGalaxy].neighbors[planet][neighbor]} days)</p>
+                      ))}
+                    </td>
+                    <td>{selectedScenarioDays[planet]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>) : <p>no</p>
+          }
   
           <button onClick={getOdds}>Calculate Odds</button>
           {odds && <p>Odds of success: {odds}</p>}
