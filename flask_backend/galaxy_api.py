@@ -1,7 +1,7 @@
 from flask import Flask, redirect, request, session, url_for
 from galaxy_structure import generate_galaxy, reveal_bounty_hunters, get_routes_data, open_json
 from millenium_falcon_mainframe import calculate_path
-from test_scan import get_all_json_files, clip_file_name
+from test_scan import get_all_json_files, clip_file_name, get_react_scenario_data
 import secrets
 import os
 
@@ -28,10 +28,15 @@ def send_galaxy():
     for galaxy_name in galaxy_data:
         galaxy = generate_galaxy('{}\\{}.json'.format(paths['galaxies'], galaxy_name))
         galaxy_data[galaxy_name]['planets'] = list(galaxy.planets.keys())
+        galaxy_data[galaxy_name]['neighbors'] = {}
+        for planet in galaxy.planets:
+            galaxy_data[galaxy_name]['neighbors'][planet] = galaxy.planets[planet].neighbors
         del galaxy_data[galaxy_name]['routes_db']
     
     api_data['galaxies'] = galaxy_data
-    api_data['scenarios'] = get_all_json_files(paths['scenarios'])
+    api_data['scenarios'] = get_react_scenario_data(paths['scenarios'])
+    print(api_data['galaxies'])
+    print(api_data['scenarios'])
     return api_data
 
 @galaxy_api.route('/send-bounty-hunters-api', methods = ['GET', 'POST'])
@@ -46,21 +51,21 @@ def calculate_odds():
     odds_array = []
     data = request.get_json()
     falcon_path = 'galaxies\\{}.json'.format(data['galaxy'])
+    scenario_path = 'scenarios\\{}.json'.format(data['scenario'])
     falcon_data = open_json(falcon_path)
+    scenario_data = open_json(scenario_path)
     starting_data = {
         'departure_planet': falcon_data['departure'],
         'destination_planet': falcon_data['arrival'],
         'fuel_capacity': falcon_data['autonomy'],
-        'time_limit': data['scenario']['countdown'],
+        'time_limit': scenario_data['countdown'],
         'start_day': 0
     }
 
     a_galaxy_far_far_away = generate_galaxy(falcon_path)
-    reveal_bounty_hunters(a_galaxy_far_far_away, data['scenario'])
+    reveal_bounty_hunters(a_galaxy_far_far_away, scenario_data)
     odds_array = calculate_path(a_galaxy_far_far_away, starting_data)
     print(odds_array)
-    print(type(odds_array))
-    #return {"odds": [1,2,3,4]}
     return odds_array
 
 @galaxy_api.route('/get-routes-api')
@@ -96,7 +101,7 @@ def upload_scenario():
         return api_data
     
     
-    api_data['scenarios'] = get_all_json_files(paths['scenarios'])
+    api_data['scenarios'] = get_react_scenario_data(paths['scenarios'])
     
     api_data['alert'] = "Upload successful - you can now select this scenario as '{}' from the dropdown menu".format(clip_file_name(filename))
 

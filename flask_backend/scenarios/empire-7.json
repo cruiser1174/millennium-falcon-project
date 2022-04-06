@@ -1,0 +1,101 @@
+{
+  "countdown": 13,
+  "bounty_hunters": [
+    {
+      "planet": "C",
+      "day": 8
+    },
+    {
+      "planet": "D",
+      "day": 8
+    },
+    {
+      "planet": "D",
+      "day": 9
+    },
+    {
+      "planet": "D",
+      "day": 10
+    },
+    {
+      "planet": "D",
+      "day": 11
+    },
+    {
+      "planet": "D",
+      "day": 12
+    },
+    {
+      "planet": "E",
+      "day": 8
+    },
+    {
+      "planet": "E",
+      "day": 9
+    },
+    {
+      "planet": "E",
+      "day": 10
+    },
+    {
+      "planet": "E",
+      "day": 11
+    },
+    {
+      "planet": "E",
+      "day": 12
+    },
+    {
+      "planet": "F",
+      "day": 8
+    },
+    {
+      "planet": "F",
+      "day": 9
+    },
+    {
+      "planet": "F",
+      "day": 10
+    },
+    {
+      "planet": "F",
+      "day": 11
+    },
+    {
+      "planet": "F",
+      "day": 12
+    },
+    {
+      "planet": "G",
+      "day": 6
+    },
+    {
+      "planet": "G",
+      "day": 7
+    },
+    {
+      "planet": "G",
+      "day": 8
+    },
+    {
+      "planet": "G",
+      "day": 9
+    },
+    {
+      "planet": "G",
+      "day": 10
+    },
+    {
+      "planet": "G",
+      "day": 11
+    },
+    {
+      "planet": "G",
+      "day": 12
+    },
+    {
+      "planet": "G",
+      "day": 13
+    }
+  ]
+}
