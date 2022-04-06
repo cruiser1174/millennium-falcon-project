@@ -66,7 +66,14 @@ def calculate_odds():
     reveal_bounty_hunters(a_galaxy_far_far_away, scenario_data)
     odds_array = calculate_path(a_galaxy_far_far_away, starting_data)
     print(odds_array)
-    return odds_array
+    new_path = []
+    for i in range(len(odds_array['path'])):
+        new_path.append({'planet': odds_array['path'][i], 'arrival_day': odds_array['days'][i]})
+    api_data = {}
+    api_data['odds'] = odds_array['odds']
+    api_data['path'] = new_path
+    print(api_data)
+    return api_data
 
 @galaxy_api.route('/get-routes-api')
 def get_routes():

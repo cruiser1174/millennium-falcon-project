@@ -67,7 +67,6 @@ function App() {
     const response = await axios.post('/calculate-odds-api', dataToPost);
     setOdds(response.data.odds);
     setRoute(response.data.path);
-    setDays(response.data.days)
   };
 
   function handleUpload(event) {
@@ -188,9 +187,8 @@ function App() {
           }
   
           <button onClick={getOdds}>Calculate Odds</button>
-          {odds && <p>Odds of success: {odds}</p>}
-          {route && <p>Route: {route}</p>}
-          {days && <p>Days: {days}</p>}
+          {odds && <p>Odds of success: {odds}%</p>}
+          {route && <p>Route: {route.map(location => <p>Day {location.arrival_day}: Arrive at {location.planet}</p>)}</p>}
   
           
         </header>
