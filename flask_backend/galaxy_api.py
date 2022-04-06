@@ -1,8 +1,9 @@
 from flask import Flask, redirect, request, session, url_for
 from galaxy_structure import generate_galaxy, reveal_bounty_hunters, get_routes_data, open_json
 from millenium_falcon_mainframe import calculate_path
-from test_scan import get_all_json_files
+from test_scan import get_all_json_files, clip_file_name
 import secrets
+import os
 
 galaxy_api = Flask(__name__)
 secret = secrets.token_hex(16)
@@ -69,6 +70,37 @@ def get_routes():
     #return odds_data
     #print(odds_data)
     return {'test': [1,2,3,4]}
+
+@galaxy_api.route('/upload-scenario-api', methods = ['GET', 'POST'])
+def upload_scenario():
+    api_data ={}
+
+    file = request.files['file']
+    filename = file.filename
+    original_filename = clip_file_name(filename)
+    file_path = os.path.join('scenarios', filename)
+
+    count = 2
+    while os.path.isfile(file_path):
+        filename = '{}-{}.json'.format(original_filename, count)
+        file_path = os.path.join('scenarios', filename)
+        count += 1
+    
+    file.save(file_path)
+    file_data = open_json(file_path)
+    file_keys = list(file_data.keys())
+    if file_keys != ['countdown', 'bounty_hunters'] and file_keys != ['bounty_hunters', 'countdown']:
+        os.remove(file_path)
+        print("File data invalid - incorrect keys - file keys are {}, ensure they are ['countdown', 'bounty_hunters']".format(file_keys))
+        api_data['alert'] = "File data invalid - incorrect keys - file keys are {}, ensure they are ['countdown', 'bounty_hunters']".format(file_keys)
+        return api_data
+    
+    
+    api_data['scenarios'] = get_all_json_files(paths['scenarios'])
+    
+    api_data['alert'] = "Upload successful - you can now select this scenario as '{}' from the dropdown menu".format(clip_file_name(filename))
+
+    return api_data
 
 if __name__ == '__main__':
     a = get_all_json_files(paths['galaxies'])

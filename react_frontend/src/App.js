@@ -2,6 +2,7 @@ import './App.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Dropdown } from './Dropdown';
+import { useAlert } from 'react-alert';
 
 function App() {
   const [galaxies, setGalaxies] = useState(null);
@@ -45,30 +46,7 @@ function App() {
     setSelectedScenario(newScenario);
   };
 
-  //if (galaxies) {
-  //  updateSelectedGalaxy(Object.keys(galaxies)[0])
-  //};
-
-  function makeOdds() {
-    const dataToPost = {
-      galaxy: selectedGalaxy,
-      scenario: scenarios[selectedScenario]
-    };
-
-    axios.post('/calculate-odds-api', dataToPost).then(
-      response => {
-        setOdds(response.data.odds);
-        setRoute(response.data.path);
-        setDays(response.data.days)
-      });
-  };
-
-  async function getExistingData() {
-    const response = await axios.get('/galaxy-api');
-    return response.data
-  };
-
-  async function createOdds() {
+  async function getOdds() {
 
     const dataToPost = {
       galaxy: selectedGalaxy,
@@ -96,7 +74,8 @@ function App() {
       },
     };
     axios.post('/upload-scenario-api', formData, config).then((response) => {
-      console.log(response.data);
+      alert(response.data.alert);
+      setScenarios(response.data.scenarios);
     });
 
   };
@@ -146,7 +125,7 @@ function App() {
             <p> Time Limit: {scenarios[selectedScenario].countdown} </p>
           </div>}
   
-          <button onClick={createOdds}>Calculate Odds</button>
+          <button onClick={getOdds}>Calculate Odds</button>
           {odds && <p>Odds of success: {odds}</p>}
           {route && <p>Route: {route}</p>}
           {days && <p>Days: {days}</p>}
