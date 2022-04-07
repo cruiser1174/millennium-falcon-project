@@ -2,6 +2,11 @@ from heapq import heappop, heappush
 from universe import Galaxy
 from math import inf
 from galaxy_structure import open_json, generate_galaxy, reveal_bounty_hunters
+import copy
+
+"""
+NEED TO UPDATE TESTING AND RETURN DATA UPDATING
+"""
 
 """
 # extract starting, finishing planets and autonomy from falcon_data
@@ -36,54 +41,46 @@ def updating_fn(return_data: dict, current_planet_data: dict, neighbor_planet_da
     # set the current planet's hunter count, appending to the list of counts for all 
     # planets in this path
     return_data[current_planet_data['name']]['hunter_count'] = current_planet_data['hunter_count']
-    print('Current planet path data: {}'.format(current_planet_data['path_data']))
+
     current_planet_data['path_data'][-1][current_planet_data['name']]['departure_day'] = current_planet_data['day']
     current_planet_data['path_data'][-1][current_planet_data['name']]['refueled'] = current_planet_data['refueled']
     current_planet_data['path_data'][-1][current_planet_data['name']]['waited_for_hunters'] = current_planet_data['waited_for_hunters']
 
-    print('name: {}'.format(current_planet_data['name']))
-    print('Current planet path data: {}'.format(current_planet_data['path_data']))
-    print("return_data: {}".format(return_data))
-    print("{} return_data: {}".format(current_planet_data['name'], return_data[current_planet_data['name']]))
-    print('\n')
+    #print('\n')
     return_data[current_planet_data['name']]['path_data'] = current_planet_data['path_data']
-    print("{} return_data: {}".format(current_planet_data['name'], return_data[current_planet_data['name']]))
-
-    neighbor_planet_data['path_data'] = current_planet_data['path_data'] + [{neighbor_planet_data['name']:{'arrival_day':  neighbor_planet_data['days'][-1]}}]
     
-    neighbor_planet_data['hunter_count'] = current_planet_data['hunter_count']
-    if are_bounty_hunters(galaxy, neighbor_planet_data['days'][-1], neighbor_planet_data['name']):
-        neighbor_planet_data['hunter_count'] += 1
+
+    neighbor_planet_data['path_data'] = current_planet_data['path_data'] + [{neighbor_planet_data['name']:{'arrival_day':  neighbor_planet_data['arrival_days'][-1]}}]
+    
+    #neighbor_planet_data['hunter_count'] = current_planet_data['hunter_count']
+    #if are_bounty_hunters(galaxy, neighbor_planet_data['arrival_days'][-1], neighbor_planet_data['name']):
+    #    neighbor_planet_data['hunter_count'] += 1
 
     # updat the neighbor's path data with: 
     # 1. day of arrival. 
     # 2. hunter counts on path. 
     # 3. path to the neighbor. 
     # 4. arrival fuel.
-    print('\n')
+    #print('\n')
     #print('current planet: {} - days = {} - path = {}'.format(current_planet_data['name'], current_planet_data['arrival_days'], current_planet_data['path_data'] ))
-    #print('neighbor planet: {} - days = {} - path = {}'.format(neighbor_planet_data['name'], neighbor_planet_data['days'], neighbor_planet_data['path_data'] ))
-    print('neighbor: {}'.format(neighbor_planet_data['name']))
-    print('neighbor planet data: {}'.format(neighbor_planet_data))
-    print('neighbor path data before: {}'.format(neighbor_planet_data['path_data']))
-    print('\n')
+    #print('neighbor planet: {} - days = {} - path = {}'.format(neighbor_planet_data['name'], neighbor_planet_data['arrival_days'], neighbor_planet_data['path_data'] ))
+    #print('\n')
 
     #print('Planet: {}, old days: {}, new_days: {}'.format(neighbor_planet_data['name'], return_data[current_planet_data['name']][0], return_data[current_planet_data['name']][0] + [neighbor_planet_data['day']] ))
     return_data[neighbor_planet_data['name']] = {
-        'arrival_days': neighbor_planet_data['days'], 
+        'arrival_days': neighbor_planet_data['arrival_days'], 
         'hunter_count': neighbor_planet_data['hunter_count'], 
         'path_data': neighbor_planet_data['path_data'], 
         'fuel_level': neighbor_planet_data['fuel']}
-    
-    print('neighbor return data after: {}'.format(return_data[neighbor_planet_data['name']]))
-    print('\n')
+
+    #print('ORIGINAL UPDATE PATH: {}'.format(neighbor_planet_data['path_data']))
     
     # add the neighbor to the list of planets to visit
     heappush(
         planets_to_visit, 
         (
             neighbor_planet_data['hunter_count'],
-            neighbor_planet_data['days'], 
+            neighbor_planet_data['arrival_days'], 
             neighbor_planet_data['fuel'], 
             neighbor_planet_data['name'], 
             current_planet_data['name'],  
@@ -160,8 +157,11 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
     # when there are still planets to visit, and there is not a valid path to the 
     # final destination (when the number of bounty hunters encountered is infinity)
     while planets_to_visit:
+        
+        
         # extract data from planets to visit minheap, popping the tuple from the heap in the process
         arrival_hunter_count, arrival_days, arrival_fuel, current_planet_name, previous_planet_name, arrival_path = heappop(planets_to_visit)
+        
         
         # get the current planet object from the galexy
         arrival_planet = galaxy.planets[current_planet_name]
@@ -202,17 +202,24 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
             # set up neighbour arrival data the check whether to travel to the neighbour and
             neighbor_arrival_data = {
             'name': neighbor,
-            'days': arrival_days + [current_planet_departure_data['day'] + current_planet_departure_data['days_to_neighbor']],
+            'arrival_days': arrival_days + [current_planet_departure_data['day'] + current_planet_departure_data['days_to_neighbor']],
             'day': current_planet_departure_data['day'] + current_planet_departure_data['days_to_neighbor'],
-            'fuel': current_planet_departure_data['fuel'] - current_planet_departure_data['days_to_neighbor']
+            'fuel': current_planet_departure_data['fuel'] - current_planet_departure_data['days_to_neighbor'],
+            'hunter_count': current_planet_departure_data['hunter_count']
             }
+            #print("Looking to travel from {} to {}".format(current_planet_name, neighbor))
 
             # check whether can reach neighbor withing time limit
             if neighbor_arrival_data['day'] <= time_limit:
+                if are_bounty_hunters(galaxy, neighbor_arrival_data['day'], neighbor):
+                    neighbor_arrival_data['hunter_count'] += 1
+                    
+                #print("neighbor planet path: {}".format(neighbor_arrival_data['path_data']))
                 # if less bounty hunters are encountered on this path to the neighbor than a previous checked 
                 # path then make this the ideal path to that planet
-                if current_planet_departure_data['hunter_count'] < path_data[neighbor]['hunter_count']:
+                if neighbor_arrival_data['hunter_count'] < path_data[neighbor]['hunter_count']:
                     updating_fn(path_data, current_planet_departure_data, neighbor_arrival_data, planets_to_visit, galaxy)
+                    #print("SUCCESSFUL TRAVEL")
                     
                 # if the number of hunters encountered up to arrival at the neighbor is the same as 
                 # before, then only update to the current path if the arrival fuel is greater than the 
@@ -220,41 +227,98 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
                 # leave the neighbor planet instantly and potentially avoid an extra day hiding from hunters, 
                 # while preventing the need to check for hunters at the neighbor or loop through all of the 
                 # neighbor's neighbors to check if refuelling is needed
-                elif current_planet_departure_data['hunter_count'] == path_data[neighbor]['hunter_count'] and neighbor_arrival_data['fuel'] > path_data[neighbor]['fuel_level']:
+                elif neighbor_arrival_data['hunter_count'] == path_data[neighbor]['hunter_count'] and neighbor_arrival_data['fuel'] > path_data[neighbor]['fuel_level']:
                     updating_fn(path_data, current_planet_departure_data, neighbor_arrival_data, planets_to_visit, galaxy)
+                    #print("SUCCESSFUL TRAVEL")
             
-            if are_bounty_hunters(galaxy, neighbor_arrival_data['day'], neighbor_arrival_data['name']):
-                days_waiting = calculate_wait_time(galaxy, current_planet_departure_data, neighbor_arrival_data, time_limit)
+                if are_bounty_hunters(galaxy, neighbor_arrival_data['day'], neighbor_arrival_data['name']):
+                    #print("TESTING WAIT at {} travelling to {}".format(current_planet_departure_data['name'], neighbor_arrival_data['name']))
 
-                #if days_waiting and neighbor_arrival_data['day'] <= time_limit:
-                if False:
-                    departure_day_after_waiting = current_planet_departure_data['day'] + days_waiting
-                    neighbor_arrival_day_after_waiting = neighbor_arrival_data['day'] + days_waiting
-                    neighbor_arrival_data['day'] = neighbor_arrival_day_after_waiting
-                    current_planet_departure_data['day'] = departure_day_after_waiting
-                    current_planet_departure_data['waited_for_hunters'] = True
-                    current_planet_departure_data['path_data'][-1][current_planet_departure_data['name']]['departure_day'] = current_planet_departure_data['day']
-                    current_planet_departure_data['path_data'][-1][current_planet_departure_data['name']]['waited_for_hunters'] = current_planet_departure_data['waited_for_hunters']
-                    
-                    #refuel while waiting
-                    if current_planet_departure_data['fuel'] < fuel_capacity:
-                        current_planet_departure_data['fuel'] = fuel_capacity
-                        current_planet_departure_data['refueled'] = True
-                    #updating_fn(path_data, current_planet_departure_data, neighbor_arrival_data, planets_to_visit)
-                    recursive_start_data = {
-                        'departure_planet': neighbor_arrival_data['name'],
-                        'destination_planet': finishing_planet_name,
-                        'fuel_capacity': neighbor_arrival_data['fuel'],
-                        'time_limit': time_limit,
-                        'start_day': neighbor_arrival_data['day']
-                    }
-                    recursive_return = calculate_path(galaxy, recursive_start_data)
-                    if recursive_return['odds'] > 0:
-                        return {
-                            'odds': (recursive_return['odds'] * calculate_prob(current_planet_departure_data['hunter_count']))/100,
-                            'arrival_days': path_data[current_planet_name]['arrival_days'] + recursive_return['arrival_days'],
-                            'path_data': current_planet_departure_data['path_data'] + recursive_return['path_data']
+                    days_waiting = calculate_wait_time(galaxy, current_planet_departure_data, neighbor_arrival_data, time_limit)
+
+                    #print("Days waiting: {}".format(days_waiting))
+                    if days_waiting and neighbor_arrival_data['day'] <= time_limit:
+                        #print('waiting and travelling from {} to {}'.format(current_planet_departure_data['name'], neighbor_arrival_data['name']))
+                        current_planet_waiting_data = copy.deepcopy(current_planet_departure_data)
+                        neighbor_waiting_data = copy.deepcopy(neighbor_arrival_data)
+                        neighbor_waiting_data['hunter_count'] -= 1
+
+                        
+                        departure_day_after_waiting = current_planet_departure_data['day'] + days_waiting
+                        neighbor_arrival_day_after_waiting = neighbor_arrival_data['day'] + days_waiting
+                        
+                        
+                        neighbor_waiting_data['day'] = neighbor_arrival_day_after_waiting
+                        #print("Arrival days BEFORE: {}".format(neighbor_waiting_data['arrival_days']))
+                        neighbor_waiting_data['arrival_days'] = neighbor_waiting_data['arrival_days'][:-1] + [neighbor_arrival_day_after_waiting]
+                        #print("Arrival days AFTER: {}".format(neighbor_waiting_data['arrival_days']))
+                        
+                        
+                        current_planet_waiting_data['day'] = departure_day_after_waiting
+
+                        
+                        
+                        current_planet_waiting_data['waited_for_hunters'] = True
+                        
+                        
+                        current_planet_waiting_data['path_data'][-1][current_planet_waiting_data['name']]['departure_day'] = current_planet_waiting_data['day']
+                        
+                        current_planet_waiting_data['path_data'][-1][current_planet_waiting_data['name']]['waited_for_hunters'] = current_planet_waiting_data['waited_for_hunters']
+
+                        
+                        #refuel while waiting
+                        if current_planet_waiting_data['fuel'] < fuel_capacity:
+                            current_planet_waiting_data['fuel'] = fuel_capacity
+                            current_planet_waiting_data['refueled'] = True
+                            neighbor_waiting_data['fuel'] = current_planet_waiting_data['fuel'] - current_planet_waiting_data['days_to_neighbor']
+                        current_planet_waiting_data['path_data'][-1][current_planet_waiting_data['name']]['refueled'] = current_planet_waiting_data['refueled']
+
+                        
+                        neighbor_waiting_data['path_data'] = current_planet_waiting_data['path_data'] + [{neighbor_waiting_data['name']: {'arrival_day': neighbor_waiting_data['day']}}]
+                        
+
+                        heappush(
+                            planets_to_visit, 
+                            (
+                                neighbor_waiting_data['hunter_count'],
+                                neighbor_waiting_data['arrival_days'], 
+                                neighbor_waiting_data['fuel'], 
+                                neighbor_waiting_data['name'], 
+                                current_planet_waiting_data['name'],  
+                                neighbor_waiting_data['path_data']))
+                        
+                        
+
+
+                    #if days_waiting and neighbor_arrival_data['day'] <= time_limit:
+                    if False:
+                        departure_day_after_waiting = current_planet_departure_data['day'] + days_waiting
+                        neighbor_arrival_day_after_waiting = neighbor_arrival_data['day'] + days_waiting
+                        neighbor_arrival_data['day'] = neighbor_arrival_day_after_waiting
+                        current_planet_departure_data['day'] = departure_day_after_waiting
+                        current_planet_departure_data['waited_for_hunters'] = True
+                        current_planet_departure_data['path_data'][-1][current_planet_departure_data['name']]['departure_day'] = current_planet_departure_data['day']
+                        current_planet_departure_data['path_data'][-1][current_planet_departure_data['name']]['waited_for_hunters'] = current_planet_departure_data['waited_for_hunters']
+                        
+                        #refuel while waiting
+                        if current_planet_departure_data['fuel'] < fuel_capacity:
+                            current_planet_departure_data['fuel'] = fuel_capacity
+                            current_planet_departure_data['refueled'] = True
+                        #updating_fn(path_data, current_planet_departure_data, neighbor_arrival_data, planets_to_visit)
+                        recursive_start_data = {
+                            'departure_planet': neighbor_arrival_data['name'],
+                            'destination_planet': finishing_planet_name,
+                            'fuel_capacity': neighbor_arrival_data['fuel'],
+                            'time_limit': time_limit,
+                            'start_day': neighbor_arrival_data['day']
                         }
+                        recursive_return = calculate_path(galaxy, recursive_start_data)
+                        if recursive_return['odds'] > 0:
+                            return {
+                                'odds': (recursive_return['odds'] * calculate_prob(current_planet_departure_data['hunter_count']))/100,
+                                'arrival_days': path_data[current_planet_name]['arrival_days'] + recursive_return['arrival_days'],
+                                'path_data': current_planet_departure_data['path_data'] + recursive_return['path_data']
+                            }
 
     
     destination_path_data = path_data[finishing_planet_name]
@@ -269,8 +333,8 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
     return return_data
 
 if __name__ == '__main__':
-    falcon_path = 'flask_backend\galaxies\millennium-falcon-3.json'
-    empire_path = 'flask_backend\scenarios\empire-3.json'
+    falcon_path = 'flask_backend\galaxies\millennium-falcon-4.json'
+    empire_path = 'flask_backend\scenarios\empire-4.json'
     falcon_data = open_json(falcon_path)
     empire_data = open_json(empire_path)
     a_galaxy_far_far_away = generate_galaxy(falcon_path)
