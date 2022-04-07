@@ -15,7 +15,6 @@ function App() {
   const [selectedScenarioDays, setSelectedScenarioDays] = useState(null);
   const [odds, setOdds] = useState(null);
   const [route, setRoute] = useState(null);
-  const [days, setDays] = useState(null);
   const [file, setFile] = useState()
 
   useEffect(() => {
@@ -66,8 +65,7 @@ function App() {
 
     const response = await axios.post('/calculate-odds-api', dataToPost);
     setOdds(response.data.odds);
-    setRoute(response.data.path);
-    setDays(response.data.days)
+    setRoute(response.data.path_data);
   };
 
   function handleUpload(event) {
@@ -186,13 +184,31 @@ function App() {
               </tbody>
             </table>) : <p>no</p>
           }
-  
           <button onClick={getOdds}>Calculate Odds</button>
-          {odds && <p>Odds of success: {odds}</p>}
-          {route && <p>Route: {route}</p>}
-          {days && <p>Days: {days}</p>}
-  
-          
+          {odds && <p>Odds of success: {odds}%</p>}
+          {route && <p>
+            Route: {route.map(stop => (
+              <table>
+                <tbody>
+                  <tr>
+                    <td>Day {stop.arrival_day}:</td>
+                    {stop.arrival_day === 0 ? 
+                      <td>Start at {stop.planet}.</td> :
+                      <td>Arrive at {stop.planet}.</td>
+                    }
+                    {stop.refueled && <td>Stay a day to refuel.</td>}
+                    {stop.waited_for_hunters && <td>Wait for bounty hunters to leave next planet.</td>}
+                  </tr>
+                  {stop.departure_day && 
+                    <tr>
+                      <td>Day {stop.departure_day}:</td>
+                      <td>Depart {stop.planet}.</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+              ))}
+                </p>}       
         </header>
       </div>
     );

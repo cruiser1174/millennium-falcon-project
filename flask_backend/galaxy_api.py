@@ -64,9 +64,10 @@ def calculate_odds():
 
     a_galaxy_far_far_away = generate_galaxy(falcon_path)
     reveal_bounty_hunters(a_galaxy_far_far_away, scenario_data)
-    odds_array = calculate_path(a_galaxy_far_far_away, starting_data)
-    print(odds_array)
-    return odds_array
+    odds_path = calculate_path(a_galaxy_far_far_away, starting_data)
+    print(odds_path)
+    return odds_path
+    
 
 @galaxy_api.route('/get-routes-api')
 def get_routes():
