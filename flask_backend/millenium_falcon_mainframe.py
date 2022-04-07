@@ -5,7 +5,7 @@ from galaxy_structure import open_json, generate_galaxy, reveal_bounty_hunters
 import copy
 
 """
-NEED TO UPDATE TESTING AND RETURN DATA UPDATING
+NEED TO STOP ADDING PLANETS TO VISIT WHEN CUIRRENT PLANET IS DESTINATION PLANETY
 """
 
 """
@@ -45,12 +45,14 @@ def updating_fn(return_data: dict, current_planet_data: dict, neighbor_planet_da
     current_planet_data['path_data'][-1][current_planet_data['name']]['departure_day'] = current_planet_data['day']
     current_planet_data['path_data'][-1][current_planet_data['name']]['refueled'] = current_planet_data['refueled']
     current_planet_data['path_data'][-1][current_planet_data['name']]['waited_for_hunters'] = current_planet_data['waited_for_hunters']
+    current_planet_data['path_data'][-1][current_planet_data['name']]['hunter_count'] = current_planet_data['hunters']
 
     #print('\n')
     return_data[current_planet_data['name']]['path_data'] = current_planet_data['path_data']
     
 
-    neighbor_planet_data['path_data'] = current_planet_data['path_data'] + [{neighbor_planet_data['name']:{'arrival_day':  neighbor_planet_data['arrival_days'][-1]}}]
+    neighbor_planet_data['path_data'] = current_planet_data['path_data'] + [{neighbor_planet_data['name']:{'arrival_day':  neighbor_planet_data['arrival_days'][-1], 'hunter_count': neighbor_planet_data['hunters']}}]
+    
     
     #neighbor_planet_data['hunter_count'] = current_planet_data['hunter_count']
     #if are_bounty_hunters(galaxy, neighbor_planet_data['arrival_days'][-1], neighbor_planet_data['name']):
@@ -113,6 +115,7 @@ def stay_the_night(galaxy: Galaxy, current_planet_departure_data: dict, fuel_cap
     # check for bounty hunters in the morning
     if are_bounty_hunters(galaxy, current_planet_departure_data['day'], current_planet_departure_data['name']):
         current_planet_departure_data['hunter_count'] += 1
+        current_planet_departure_data['hunters'] += 1
 
 
 def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
@@ -134,14 +137,14 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
         path_data[planet] = {
             'arrival_days': [start_day], 
             'hunter_count': inf, 
-            'path_data': [{starting_planet_name:{'arrival_day': start_day}}], 
+            'path_data': [{starting_planet_name:{'arrival_day': start_day, 'hunter_count': 0}}], 
             'fuel_level': 0}
     
     # manually set the return paths data for the starting planet
     path_data[starting_planet_name] = {
             'arrival_days': [start_day], 
             'hunter_count': 0, 
-            'path_data': [{starting_planet_name:{'arrival_day': start_day}}], 
+            'path_data': [{starting_planet_name:{'arrival_day': start_day, 'hunter_count': 0}}], 
             'fuel_level': fuel_capacity}
 
     # initialise planets to visit minheap as a list of tuples, containing: 
@@ -151,7 +154,7 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
     # 4. the name of the planet
     # 5. the name of the previous planet
     # 6. path to date
-    planets_to_visit = [(0, [start_day], fuel_capacity, starting_planet_name, None, [{starting_planet_name:{'arrival_day': start_day}}])]
+    planets_to_visit = [(0, [start_day], fuel_capacity, starting_planet_name, None, [{starting_planet_name:{'arrival_day': start_day, 'hunter_count': 0}}])]
 
 
     # when there are still planets to visit, and there is not a valid path to the 
@@ -187,7 +190,8 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
                 'path_data': arrival_path,
                 'days_to_neighbor': neighbors_minus_previous[neighbor],
                 'refueled': False,
-                'waited_for_hunters': False
+                'waited_for_hunters': False,
+                'hunters': arrival_path[-1][current_planet_name]['hunter_count']
             }
             
             # If there are bounty hunters at the current planet then increase the hunter count
@@ -205,7 +209,8 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
             'arrival_days': arrival_days + [current_planet_departure_data['day'] + current_planet_departure_data['days_to_neighbor']],
             'day': current_planet_departure_data['day'] + current_planet_departure_data['days_to_neighbor'],
             'fuel': current_planet_departure_data['fuel'] - current_planet_departure_data['days_to_neighbor'],
-            'hunter_count': current_planet_departure_data['hunter_count']
+            'hunter_count': current_planet_departure_data['hunter_count'],
+            'hunters': 0
             }
             #print("Looking to travel from {} to {}".format(current_planet_name, neighbor))
 
@@ -213,6 +218,7 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
             if neighbor_arrival_data['day'] <= time_limit:
                 if are_bounty_hunters(galaxy, neighbor_arrival_data['day'], neighbor):
                     neighbor_arrival_data['hunter_count'] += 1
+                    neighbor_arrival_data['hunters'] += 1
                     
                 #print("neighbor planet path: {}".format(neighbor_arrival_data['path_data']))
                 # if less bounty hunters are encountered on this path to the neighbor than a previous checked 
@@ -242,6 +248,7 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
                         current_planet_waiting_data = copy.deepcopy(current_planet_departure_data)
                         neighbor_waiting_data = copy.deepcopy(neighbor_arrival_data)
                         neighbor_waiting_data['hunter_count'] -= 1
+                        neighbor_waiting_data['hunters'] -= 1
 
                         
                         departure_day_after_waiting = current_planet_departure_data['day'] + days_waiting
@@ -264,6 +271,7 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
                         current_planet_waiting_data['path_data'][-1][current_planet_waiting_data['name']]['departure_day'] = current_planet_waiting_data['day']
                         
                         current_planet_waiting_data['path_data'][-1][current_planet_waiting_data['name']]['waited_for_hunters'] = current_planet_waiting_data['waited_for_hunters']
+                        current_planet_waiting_data['path_data'][-1][current_planet_waiting_data['name']]['hunter_count'] = current_planet_waiting_data['hunters']
 
                         
                         #refuel while waiting
@@ -274,7 +282,7 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
                         current_planet_waiting_data['path_data'][-1][current_planet_waiting_data['name']]['refueled'] = current_planet_waiting_data['refueled']
 
                         
-                        neighbor_waiting_data['path_data'] = current_planet_waiting_data['path_data'] + [{neighbor_waiting_data['name']: {'arrival_day': neighbor_waiting_data['day']}}]
+                        neighbor_waiting_data['path_data'] = current_planet_waiting_data['path_data'] + [{neighbor_waiting_data['name']: {'arrival_day': neighbor_waiting_data['day'], 'hunter_count': neighbor_waiting_data['hunters']}}]
                         
 
                         heappush(
@@ -286,39 +294,6 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
                                 neighbor_waiting_data['name'], 
                                 current_planet_waiting_data['name'],  
                                 neighbor_waiting_data['path_data']))
-                        
-                        
-
-
-                    #if days_waiting and neighbor_arrival_data['day'] <= time_limit:
-                    if False:
-                        departure_day_after_waiting = current_planet_departure_data['day'] + days_waiting
-                        neighbor_arrival_day_after_waiting = neighbor_arrival_data['day'] + days_waiting
-                        neighbor_arrival_data['day'] = neighbor_arrival_day_after_waiting
-                        current_planet_departure_data['day'] = departure_day_after_waiting
-                        current_planet_departure_data['waited_for_hunters'] = True
-                        current_planet_departure_data['path_data'][-1][current_planet_departure_data['name']]['departure_day'] = current_planet_departure_data['day']
-                        current_planet_departure_data['path_data'][-1][current_planet_departure_data['name']]['waited_for_hunters'] = current_planet_departure_data['waited_for_hunters']
-                        
-                        #refuel while waiting
-                        if current_planet_departure_data['fuel'] < fuel_capacity:
-                            current_planet_departure_data['fuel'] = fuel_capacity
-                            current_planet_departure_data['refueled'] = True
-                        #updating_fn(path_data, current_planet_departure_data, neighbor_arrival_data, planets_to_visit)
-                        recursive_start_data = {
-                            'departure_planet': neighbor_arrival_data['name'],
-                            'destination_planet': finishing_planet_name,
-                            'fuel_capacity': neighbor_arrival_data['fuel'],
-                            'time_limit': time_limit,
-                            'start_day': neighbor_arrival_data['day']
-                        }
-                        recursive_return = calculate_path(galaxy, recursive_start_data)
-                        if recursive_return['odds'] > 0:
-                            return {
-                                'odds': (recursive_return['odds'] * calculate_prob(current_planet_departure_data['hunter_count']))/100,
-                                'arrival_days': path_data[current_planet_name]['arrival_days'] + recursive_return['arrival_days'],
-                                'path_data': current_planet_departure_data['path_data'] + recursive_return['path_data']
-                            }
 
     
     destination_path_data = path_data[finishing_planet_name]
@@ -333,8 +308,8 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
     return return_data
 
 if __name__ == '__main__':
-    falcon_path = 'flask_backend\galaxies\millennium-falcon-4.json'
-    empire_path = 'flask_backend\scenarios\empire-4.json'
+    falcon_path = 'flask_backend\galaxies\millennium-falcon-2.json'
+    empire_path = 'flask_backend\scenarios\empire-2.json'
     falcon_data = open_json(falcon_path)
     empire_data = open_json(empire_path)
     a_galaxy_far_far_away = generate_galaxy(falcon_path)
