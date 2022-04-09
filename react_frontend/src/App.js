@@ -1,8 +1,10 @@
+/** @jsxImportSource @emotion/react */
+
 import './App.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Dropdown } from './Dropdown';
-import { useAlert } from 'react-alert';
+import { jsx } from '@emotion/react';
 
 function App() {
   const [galaxies, setGalaxies] = useState(null);
@@ -139,7 +141,7 @@ function App() {
               ))}
               </ul>
             </p>
-            <p> Departure Planet: {galaxies[selectedGalaxy].departure} </p>
+            <p css={{color: 'red', '&:hover': {color: 'green'}}}> Departure Planet: {galaxies[selectedGalaxy].departure} </p>
             <p> Destination Planet: {galaxies[selectedGalaxy].arrival} </p>
             <p> Autonomy (days): {galaxies[selectedGalaxy].autonomy} </p>
           </div>}
