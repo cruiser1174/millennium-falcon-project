@@ -72,6 +72,7 @@ def calculate_odds():
 
     # calculate and return the optimal path
     odds_path = calculate_path(a_galaxy_far_far_away, starting_data)
+    print(odds_path)
     return odds_path
 
 # api which accepts an uploaded json file, checkes if it has the correct format and adds it 
