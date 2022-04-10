@@ -5,15 +5,17 @@ from file_manipulation import open_json
 from galaxy_structure import generate_galaxy, reveal_bounty_hunters
 import copy
 
+# calculate probability of being caught by bounty hunters given the 
+# cumulative number of days spent on a planet with them
 def calculate_prob(n: int) -> float:
     prob = 0
     if n == inf:
         return 0
+
     for i in range(1, n+1):
         prob += 9**(i-1) / 10**i
+    
     return 100*(1 - prob)
-
-
 
 # checks if there will be bounty hunters at a particular planet on a particular day
 def are_bounty_hunters(galaxy: Galaxy, day: int, planet_name: str) -> bool:
@@ -22,20 +24,33 @@ def are_bounty_hunters(galaxy: Galaxy, day: int, planet_name: str) -> bool:
     else:
         return False
 
+# updates the 'path' key of the current_planet data with values from the most recent planet on 
+# the path based on changes to the day of departure, whether the falcon waited for hunter/refueled, 
+# and also keeps track of the total number of hunters encountered on the path. This path pariable 
+# is what is then returned at the end of the program, containing all of the necessary information 
+# to render the solution ot the user.
 def update_current_path_data(current_data: dict):
     current_data['path_data'][-1]['departure_day'] = current_data['day']
     current_data['path_data'][-1]['refueled'] = current_data['refueled']
     current_data['path_data'][-1]['waited_for_hunters'] = current_data['waited_for_hunters']
     current_data['path_data'][-1]['hunter_count'] = current_data['hunters']
 
+# initiates the path varable to a neighbor, giving the day of arrival, planet name, and hunter 
+# count as of the day of arrival. It is necessary to update the neighbor path before arrival as 
+# this populates the destination path which is not then added to the planets_to_visit heap and 
+# checked against refuelling/waitng etc.
 def update_neighbor_path_data(neighbor_data: dict, current_data: dict):
     neighbor_data['path_data'] = current_data['path_data'] + [{
         'planet': neighbor_data['name'], 
         'arrival_day':  neighbor_data['arrival_days'][-1], 
         'hunter_count': neighbor_data['hunters']}]
 
+# updates the return path_data array for the calculate_path function, adding the neighbor data 
+# and editing the current planet data to account for changes in hunter_count and path data after 
+# waiting and/or refueling
 def update_return_path_data(path_data: dict, neighbor_planet_data: dict, current_planet_data: dict):
-    # updat the neighbor's path data with day of arrival, hunter counts on path, path to the neighbor and arrival fuel.
+    # updat the neighbor's path data with day of arrival, hunter counts on path, path to the neighbor 
+    # and arrival fuel.
     path_data[neighbor_planet_data['name']] = {
         'arrival_days': neighbor_planet_data['arrival_days'], 
         'hunter_count': neighbor_planet_data['hunter_count'], 
@@ -46,11 +61,17 @@ def update_return_path_data(path_data: dict, neighbor_planet_data: dict, current
     path_data[current_planet_data['name']]['hunter_count'] = current_planet_data['hunter_count']
     path_data[current_planet_data['name']]['path_data'] = current_planet_data['path_data']
 
+# A combination of functions for updating path variables for each planet and then in the return 
+# path_data, combined here into a single function as they are called together on multiple occasions.
 def update_path_data(path_data: dict, neighbor_planet_data: dict, current_planet_data: dict):
     update_current_path_data(current_planet_data)
     update_neighbor_path_data(neighbor_planet_data, current_planet_data)
     update_return_path_data(path_data, neighbor_planet_data, current_planet_data)
 
+# revises the neighbor planet data after waiting over night for bounty hunters to leave the neighbor 
+# planet. Neighbor data is a deep copy of the neighbor data from the case where there is no waiting. 
+# As the falcon is waiting so that it does not encounter hunters, the hunter count is reduced and 
+# the extra days are added to the arrival days
 def revise_neighbor_data(neighbor_data: dict, current_data: dict, days_waiting: int):
     neighbor_data['hunter_count'] -= 1
     neighbor_data['hunters'] -= 1
@@ -59,26 +80,34 @@ def revise_neighbor_data(neighbor_data: dict, current_data: dict, days_waiting: 
     neighbor_data['arrival_days'] = neighbor_data['arrival_days'][:-1] + [neighbor_arrival_day_after_waiting]
     neighbor_data['fuel'] = current_data['fuel'] - current_data['days_to_neighbor']
     
-                        
+# revises current planet data after waiting for hunters to leave neighbor planet. The departure 
+# day is pushed forward and the boolean value for waiting for hunters is set to true, and is 
+# used to aid in rendering the route to the user                    
 def revise_current_data(current_data: dict, days_waiting: int):
     departure_day_after_waiting = current_data['day'] + days_waiting
     current_data['day'] = departure_day_after_waiting
     current_data['waited_for_hunters'] = True
 
+# Refuels the millennium falcon if waiting overnight and there is not a full tank. Sets refueled to true, 
+# which is used to render the route to the end user
 def refuel(planet_data: dict, fuel_capacity: int):
     if planet_data['fuel'] < fuel_capacity:
         planet_data['fuel'] = fuel_capacity
         planet_data['refueled'] = True
     
-
-
+# checks to see if the falcon can wait at a planet for bounty hunters to leave its neighbor. It increments 
+# the current day while there are bounty hunters at the neighbor. If bounty hunters appear at the current 
+# planet or the falcon would arrive at the neighbor beyond the time limit, then the function returns 0 waiting
+# days as there is no case in which exposure to bounty hunters can be reduced by waiting. Otherwise the function 
+# returns the minimum number of days waiting until the falcon can leave and reach the neighbor after the hunters leave
 def calculate_wait_time(galaxy: Galaxy, current_planet_data: dict, neighbor_arrival_data: dict, time_limit: int) -> int:
     day_after_waiting = current_planet_data['day']
     neighbor_arrival_day_after_waiting = neighbor_arrival_data['day']
     days_waiting = 0
 
     while are_bounty_hunters(galaxy, neighbor_arrival_day_after_waiting, neighbor_arrival_data['name']):
-        if are_bounty_hunters(galaxy, day_after_waiting, current_planet_data['name']) or neighbor_arrival_day_after_waiting > time_limit:
+        if are_bounty_hunters(galaxy, day_after_waiting, current_planet_data['name']) \
+            or neighbor_arrival_day_after_waiting > time_limit:
             # don't wait at all
             return 0
         days_waiting += 1
@@ -87,6 +116,8 @@ def calculate_wait_time(galaxy: Galaxy, current_planet_data: dict, neighbor_arri
 
     return days_waiting
 
+# if staying the night due to lack of fuel, increments the current_planet day, refuels the falcon and increases 
+# the overall path hunter count and current hunter count if hunters are encountered at the planet
 def stay_the_night(galaxy: Galaxy, current_planet_departure_data: dict, fuel_capacity: int):
     # increment the day
     current_planet_departure_data['day'] += 1
@@ -97,6 +128,8 @@ def stay_the_night(galaxy: Galaxy, current_planet_departure_data: dict, fuel_cap
         current_planet_departure_data['hunter_count'] += 1
         current_planet_departure_data['hunters'] += 1
 
+# pushes planet data to the planets_to_visit heap, if the next planet is not the departure planet. There is no 
+# need to add the destination planet as there is no case in which the falcon will leave the destination planet
 def push_to_heap(heap: list, planet_data, destination_planet):
     if planet_data['name'] != destination_planet:
         heappush(
@@ -116,8 +149,8 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
     # 1. array of arrival days at previous planets on path, starting with jusy day 0 at first planet
     # 2. having spent an infinite number of days with bounty hunters (worst case scenario) 
     # 3. a path list of dictionaries, where each dictionary contains a planet on the path to the planet 
-    #       in question, along with key details about the path - arrival days, departure days, time spent 
-    #       with hunters, refuelling and waiting for bounty hunters
+    #    in question, along with key details about the path - arrival days, departure days, time spent 
+    #    with hunters, refuelling and waiting for bounty hunters
     # 4. the amount of fuel in the falcon when it arrived at the planet in question
     for planet in galaxy.planets:
         path_data[planet] = {
@@ -244,6 +277,7 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
     destination_path_data = path_data[starting_data['destination_planet']]
     odd_of_success = calculate_prob(destination_path_data['hunter_count'])
     
+    # return data in format for easy rendering in the front end to the user
     return_data = {
         'odds': odd_of_success,
         'path_data': destination_path_data['path_data']
@@ -252,8 +286,8 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
     return return_data
 
 if __name__ == '__main__':
-    falcon_path = 'flask_backend\galaxies\millennium-falcon-2.json'
-    empire_path = 'flask_backend\scenarios\empire-2.json'
+    falcon_path = 'flask_backend\galaxies\millennium-falcon-4.json'
+    empire_path = 'flask_backend\scenarios\empire-4.json'
     falcon_data = open_json(falcon_path)
     empire_data = open_json(empire_path)
     a_galaxy_far_far_away = generate_galaxy(falcon_path)
