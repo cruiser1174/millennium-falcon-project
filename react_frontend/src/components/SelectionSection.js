@@ -36,7 +36,7 @@ export function SelectionSection(props) {
                 </div>
             </div>
             <div className="upload" css={uploadStyle}>
-                <SubmitScenarioForm onSubmit={props.handleSubmit} handleUpload={props.handleUpload}/>
+                <SubmitScenarioForm handleSubmit={props.handleSubmit} handleUpload={props.handleUpload} file={props.file}/>
             </div>
         </div>
     );

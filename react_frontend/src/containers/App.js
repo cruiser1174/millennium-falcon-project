@@ -82,24 +82,23 @@ function App() {
     setOdds(response.data.odds);
   };
 
-  function handleFileUpload(event) {
-    setFile(event.target.files[0])
+  function handleFileUpload(newFile) {
+    setFile(newFile);
   };
 
-  function handleFileSubmit(event) {
-    event.preventDefault()
+  async function handleFileSubmit(newFile) {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('fileName', file.name);
+    formData.append('file', newFile);
+    formData.append('fileName', newFile.name);
     const config = {
       headers: {
         'content-type': 'multipart/form-data',
       },
     };
-    axios.post('/upload-scenario-api', formData, config).then((response) => {
-      setScenarios(response.data.scenarios);
-      alert(response.data.alert);
-    });
+
+    const response = await axios.post('/upload-scenario-api', formData, config);
+    setScenarios(response.data.scenarios);
+    alert(response.data.alert);
 
   };
 
@@ -123,8 +122,9 @@ function App() {
             scenarios={Object.keys(scenarios)}
             updateSelectedGalaxy={updateSelectedGalaxy}
             updateSelectedScenario={updateSelectedScenario}
-            onSubmit={handleFileSubmit}
-            handleUpload={handleFileUpload}/> 
+            handleSubmit={handleFileSubmit}
+            handleUpload={handleFileUpload}
+            file={file}/> 
           </div>
           
 

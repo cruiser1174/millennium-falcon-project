@@ -80,6 +80,7 @@ def calculate_odds():
 @galaxy_api.route('/upload-scenario-api', methods = ['GET', 'POST'])
 def upload_scenario():
     api_data ={}
+    print("here")
 
     # get the uploaded file
     file = request.files['file']
@@ -119,6 +120,7 @@ def upload_scenario():
     # if the scenario name was changed from what was uploaded
     api_data['scenarios'] = get_react_scenario_data(paths['scenarios'])
     api_data['alert'] = "Upload successful - you can now select this scenario as '{}' from the dropdown menu".format(clip_file_name(filename))
+    print(api_data)
     return api_data
 
 if __name__ == '__main__':
