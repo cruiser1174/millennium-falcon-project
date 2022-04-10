@@ -62,8 +62,7 @@ def calculate_odds():
         'departure_planet': falcon_data['departure'],
         'destination_planet': falcon_data['arrival'],
         'fuel_capacity': falcon_data['autonomy'],
-        'time_limit': scenario_data['countdown'],
-        'start_day': 0
+        'time_limit': scenario_data['countdown']
     }
 
     # generate the galaxy for the scenario

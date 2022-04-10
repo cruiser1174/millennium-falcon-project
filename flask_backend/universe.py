@@ -1,4 +1,3 @@
-
 # Create Planet class, objects of which will make up the Galaxy
 class Planet:
     def __init__(self, name: str):
