@@ -7,7 +7,8 @@ export function ScenarioDisplay(props) {
     const scenarioDisplayStyle = {
         display: 'flex',
         width: '100%',
-        justifyContent: 'space-around'
+        justifyContent: 'space-around',
+        flexFlow: 'row wrap'
     }
 
     return (

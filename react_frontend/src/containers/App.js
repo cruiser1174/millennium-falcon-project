@@ -10,6 +10,9 @@ import { Odds } from '../components/Odds';
 import { Route } from '../components/Route';
 import logo from '../logo.svg';
 import certainty from '../certainty.gif';
+import optimism from '../optimism.gif';
+import yehaw from '../yehaw.gif';
+import doomed from '../doomed.gif';
 import { SelectionSection } from '../components/SelectionSection';
 import { ScenarioDisplay } from '../components/ScenarioDisplay';
 
@@ -25,7 +28,8 @@ function App() {
   const [selectedScenarioDays, setSelectedScenarioDays] = useState(null);
   const [odds, setOdds] = useState(null);
   const [route, setRoute] = useState(null);
-  const [file, setFile] = useState()
+  const [file, setFile] = useState();
+  const [displayImage, setDisplayImage] = useState();
 
   useEffect(() => {
     fetch('/galaxy-api').then(result => result.json()).then(data => {
@@ -34,24 +38,36 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    if (selectedGalaxy && selectedScenario && selectedScenarioPlanets.every(planet => selectedGalaxyPlanets.includes(planet))) {
+      getOdds();
+    } else {
+      setOdds(null);
+    }
+  }, [selectedGalaxy, selectedScenario])
+
+  useEffect(() => {
+    if (isNaN(parseInt(odds))) {
+      setDisplayImage(null);
+    } else if (odds === 100) {
+      setDisplayImage(yehaw);
+    } else if (odds === 0) {
+      setDisplayImage(doomed);
+    } else {
+      setDisplayImage(optimism);
+    }
+  }, [odds])
+
   function updateSelectedGalaxy(newGalaxy) {
     setSelectedGalaxy(newGalaxy);
     setSelectedGalaxyPlanets(galaxies[newGalaxy].planets);
     setSelectedNeighborData(galaxies[newGalaxy].neighbors);
   };
 
-  function updateSelectedGalaxyPlanets(newPlanets) {
-    setSelectedGalaxyPlanets(newPlanets);
-  };
-
   function updateSelectedScenario(newScenario) {
     setSelectedScenario(newScenario);
     setSelectedScenarioPlanets(Object.keys(scenarios[newScenario].planets));
     setSelectedScenarioDays(scenarios[newScenario].planets);
-  };
-
-  function updateSelectedScenarioPlanets(newPlanets) {
-    setSelectedScenarioPlanets(newPlanets);
   };
 
   async function getOdds() {
@@ -62,8 +78,8 @@ function App() {
     };
 
     const response = await axios.post('/calculate-odds-api', dataToPost);
-    setOdds(response.data.odds);
     setRoute(response.data.path_data);
+    setOdds(response.data.odds);
   };
 
   function handleFileUpload(event) {
@@ -87,6 +103,7 @@ function App() {
 
   };
 
+
   if (!galaxies || !scenarios) {
     return (
       <div className="App">
@@ -100,17 +117,21 @@ function App() {
       <div className="App">
         <header className="App-header">
           <h1 id="title">Kessel Run odds calculator</h1>
-          {<SelectionSection 
+          <div>
+          <SelectionSection 
             galaxies={Object.keys(galaxies)} 
             scenarios={Object.keys(scenarios)}
             updateSelectedGalaxy={updateSelectedGalaxy}
             updateSelectedScenario={updateSelectedScenario}
             onSubmit={handleFileSubmit}
-            handleUpload={handleFileUpload}/> }
+            handleUpload={handleFileUpload}/> 
+          </div>
+          
 
           {(selectedGalaxy && selectedScenario) && (
             selectedScenarioPlanets.every(planet => selectedGalaxyPlanets.includes(planet)) ? 
               <div>
+                <h2 id="title">Scenario details</h2>
                 <ScenarioDisplay 
                   planets={selectedGalaxyPlanets} 
                   neighbors={selectedNeighborData} 
@@ -120,16 +141,15 @@ function App() {
                   fuelCapacity={galaxies[selectedGalaxy].autonomy}
                   timeLimit={scenarios[selectedScenario].countdown}/>
 
-                <button onClick={getOdds}>Calculate Odds</button>
+                {/*<button onClick={getOdds}>Calculate Odds</button>*/}
               </div> :
               <CompareScenarioGalaxy galaxy={selectedGalaxy} galaxyPlanets={selectedGalaxyPlanets} scenario={selectedScenario} scenarioPlanets={selectedScenarioPlanets} />
           )}
 
           {!isNaN(parseInt(odds)) && (
             <div>
-              <Odds odds={odds}/>
-              <p>{typeof odds == 'number'}</p>
-              {odds > 0 ? <Route route={route} /> : <img src={certainty}/>}
+              <h2 id="title">odds of success</h2>
+              <Odds odds={odds} route={route} image={displayImage}/>
             </div>
             )}    
         </header>

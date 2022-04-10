@@ -7,14 +7,15 @@ export function ScenarioDetails(props) {
         flexDirection: 'column',
         justifyContent: 'space-around',
         alignItems: 'flex-start',
-        marginRight: '5rem'
+        margin: '0rem 1.5rem',
+        width: '30%'
     }
     return (
         <div className="scenarioDetails" css={detailsStyle}>
-            <h3>Start planet: {props.startPlanet}</h3>
-            <h3>Destination planet: {props.destinationPlanet}</h3>
-            <h3>Time limit: {props.timeLimit} days</h3>
-            <h3>Fuel capacity: {props.fuelCapacity} days</h3>
+            <h4>Start planet: {props.startPlanet}</h4>
+            <h4>Destination planet: {props.destinationPlanet}</h4>
+            <h4>Time limit: {props.timeLimit} days</h4>
+            <h4>Fuel capacity: {props.fuelCapacity} days</h4>
         </div>
     );
 }

@@ -7,7 +7,7 @@ export function SelectionSection(props) {
     const selectionStyle = {
         display: 'flex',
         flexFlow: 'row wrap',
-        width: '75%',
+        width: '100%',
         justifyContent: 'space-around',
         alignContent: 'flex-start',
         marginBottom: '2rem'
@@ -16,7 +16,8 @@ export function SelectionSection(props) {
 
     const dropdownBoxStyle = {
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        margin: '0.5rem 4rem'
     }
 
     const dropdownStyle = {
@@ -28,7 +29,7 @@ export function SelectionSection(props) {
     return(
         <div className="selectionSection" css={selectionStyle}>
             <div className="dropdownBox" css={dropdownBoxStyle}>
-                <p>Select a galaxy and scenario</p>
+                <h3>Select a galaxy and scenario</h3>
                 <div className="dropdowns" css={dropdownStyle}>
                     <Dropdown id="galaxy" items={props.galaxies} onChange={props.updateSelectedGalaxy} />
                     <Dropdown id="scenario" items={props.scenarios} onChange={props.updateSelectedScenario} />
