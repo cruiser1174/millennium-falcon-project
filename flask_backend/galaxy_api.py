@@ -1,7 +1,7 @@
 from flask import Flask, request
 from galaxy_structure import generate_galaxy, reveal_bounty_hunters, open_json
 from millenium_falcon_mainframe import calculate_path
-from test_scan import get_all_json_files, clip_file_name, get_react_scenario_data
+from file_manipulation import get_all_json_files, clip_file_name, get_react_scenario_data
 import os
 
 galaxy_api = Flask(__name__)
