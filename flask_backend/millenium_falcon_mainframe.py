@@ -86,7 +86,7 @@ def revise_neighbor_data(neighbor_data: dict, current_data: dict, days_waiting: 
 def revise_current_data(current_data: dict, days_waiting: int):
     departure_day_after_waiting = current_data['day'] + days_waiting
     current_data['day'] = departure_day_after_waiting
-    current_data['waited_for_hunters'] = [True, days_waiting]
+    current_data['waited_for_hunters'] = days_waiting
 
 # Refuels the millennium falcon if waiting overnight and there is not a full tank. Sets refueled to true, 
 # which is used to render the route to the end user
@@ -201,7 +201,7 @@ def calculate_path(galaxy: Galaxy, starting_data: dict) -> dict:
                 'path_data': arrival_path,
                 'days_to_neighbor': arrival_planet.neighbors[neighbor],
                 'refueled': False,
-                'waited_for_hunters': [False, 0],
+                'waited_for_hunters': 0,
                 'hunters': arrival_path[-1]['hunter_count']
             }
 

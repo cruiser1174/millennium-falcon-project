@@ -24,7 +24,9 @@ export function ScenarioGalaxyTable(props) {
                 <td className="planet">{planet}</td>
                 <td className="neighbors">
                     {Object.keys(props.neighbors[planet]).map(neighbor => (
-                    <p className="neighbor">{neighbor} ({props.neighbors[planet][neighbor]} days)</p>
+                        props.neighbors[planet][neighbor] > 1 ? 
+                            <p className="neighbor">{neighbor} ({props.neighbors[planet][neighbor]} days)</p> :
+                            <p className="neighbor">{neighbor} ({props.neighbors[planet][neighbor]} day)</p>
                     ))}
                 </td>
                 <td className="hunterDays">{props.scenarioDays[planet]}</td>

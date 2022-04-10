@@ -9,11 +9,10 @@
   padding: 0;
 }
 
-
-#title {
-  margin: 1rem;
+.jedi-title {
   font-family: starjedi;
   color: #FFE81F;
+  margin: 2rem;
 }
 
 .App {

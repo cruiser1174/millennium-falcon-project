@@ -14,10 +14,17 @@ export function Route(props) {
                                 <td className="start-planet"><h4>Start at {stop.planet}.</h4></td> :
                                 <td className="arrival-planet"><h4>Arrive at {stop.planet}.</h4></td>}
 
-                                {stop.departure_day === stop.arrival_day && <td className="quick-leave"><h4>Leave right away for {stops[index + 1].planet}</h4></td>}
+                                {stop.departure_day === stop.arrival_day && <td className="quick-leave"><h4>Leave right away for {stops[index + 1].planet}.</h4></td>}
 
                                 {stop.refueled && <td className="refuel"><h4>Stay a day to refuel.</h4></td>}
-                                {stop.waited_for_hunters && <td className="wait"><h4>Wait for bounty hunters to leave {stops[index + 1].planet}.</h4></td>}
+                                
+                                {stop.hunter_count > 0 && (stop.hunter_count > 1 ? 
+                                    <td className="hide"><h4>{stop.hunter_count} days spent hiding in presence of bounty hunters.</h4></td> :
+                                    <td className="hide"><h4>{stop.hunter_count} day spent hiding in presence of bouty hunters.</h4></td>)}
+
+                                {stop.waited_for_hunters > 0 && (stop.waited_for_hunters > 1 ? 
+                                    <td className="wait"><h4>Wait {stop.waited_for_hunters} days for bounty hunters to leave {stops[index + 1].planet}.</h4></td> :
+                                    <td className="wait"><h4>Wait {stop.waited_for_hunters} day for bounty hunters to leave {stops[index + 1].planet}.</h4></td>)}
                             </tr>
                         </div>                            
 

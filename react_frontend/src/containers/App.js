@@ -115,7 +115,7 @@ function App() {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 id="title">Kessel Run odds calculator</h1>
+          <h1 id="app-title" className='jedi-title'>Kessel Run odds calculator</h1>
           <div>
           <SelectionSection 
             galaxies={Object.keys(galaxies)} 
@@ -131,7 +131,7 @@ function App() {
           {(selectedGalaxy && selectedScenario) && (
             selectedScenarioPlanets.every(planet => selectedGalaxyPlanets.includes(planet)) ? 
               <div>
-                <h2 id="title">Scenario details</h2>
+                <h2 id="display-title" className='jedi-title'>Scenario details</h2>
                 <ScenarioDisplay 
                   planets={selectedGalaxyPlanets} 
                   neighbors={selectedNeighborData} 
@@ -148,7 +148,7 @@ function App() {
 
           {!isNaN(parseInt(odds)) && (
             <div>
-              <h2 id="title">odds of success</h2>
+              <h2 id="odds-title" className='jedi-title'>odds of success</h2>
               <Odds odds={odds} route={route} image={displayImage}/>
             </div>
             )}    

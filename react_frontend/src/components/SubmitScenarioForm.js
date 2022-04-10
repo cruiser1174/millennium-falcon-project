@@ -23,8 +23,6 @@ export function SubmitScenarioForm(props) {
                 <input type="file" onChange={handleFileUpload}/>
                 <button type="submit">Upload</button>
             </form>
-
-            {props.file ? <p>file: {props.file.name}</p> : <p>no file</p>}
         </div>
     );
 }
