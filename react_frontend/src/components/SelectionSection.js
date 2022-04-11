@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import React from "react";
 import { Dropdown } from "./Dropdown";
 import { SubmitScenarioForm } from './SubmitScenarioForm';
@@ -15,7 +14,7 @@ export function SelectionSection(props) {
                         <Dropdown id="scenario" items={props.scenarios} onChange={props.updateSelectedScenario} />
                     </div>
                 </div>
-                <div className="upload">
+                <div className="upload-form-container">
                     <SubmitScenarioForm handleSubmit={props.handleSubmit} handleUpload={props.handleUpload} file={props.file}/>
                 </div>
             </div>

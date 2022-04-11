@@ -2,7 +2,7 @@ import React from "react";
 
 export function CompareScenarioGalaxy(props) {
     return (
-        <div className="scenario-section">
+        <div id="scenario-section" className="center-col-flex">
             <h2 id="display-title" className='jedi-title'>Scenario details</h2>
             <div className="scenario-comparison">
                 <h4 id="comparison-overview">

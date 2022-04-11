@@ -4,9 +4,9 @@ import { ScenarioGalaxyTable } from "./ScenarioGalaxyTable";
 
 export function ScenarioDisplay(props) {
     return (
-        <div className="scenario-section">
+        <div id="scenario-section" className="center-col-flex">
             <h2 id="display-title" className='jedi-title'>Scenario details</h2>
-            <div className="scenario-display">
+            <div className="row-wrap-flex">
                 <ScenarioDetails 
                     startPlanet={props.startPlanet} 
                     destinationPlanet={props.destinationPlanet} 

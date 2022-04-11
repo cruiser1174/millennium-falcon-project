@@ -4,31 +4,31 @@ export function ScenarioGalaxyTable(props) {
     return (
         <table id="scenario-comparison-table" className="scenario-galaxy-table">
             <colgroup>
-                <col id="planets-col" className="planets"/>
-                <col id="neighbors-col" className="neighbors"/>
-                <col id="hunters-col" className="hunters"/>
+                <col id="planets-col" />
+                <col id="neighbors-col" />
+                <col id="hunters-col" />
             </colgroup>
 
             <thead>
                 <tr>
-                    <th col="planets" className="planets">Planets</th>
-                    <th className="neighbors">Neighbors</th>
-                    <th className="hunters">Days with bounty hunters</th>
+                    <th id="planets-header" className="table-header">Planets</th>
+                    <th id="neighbors-header" className="table-header">Neighbors</th>
+                    <th id="hunters-header" className="table-header">Days with bounty hunters</th>
                 </tr>
             </thead>
 
             <tbody>
             {props.planets.map(planet => (
                 <tr>
-                <td className="planet">{planet}</td>
-                <td className="neighbors">
-                    {Object.keys(props.neighbors[planet]).map(neighbor => (
-                        props.neighbors[planet][neighbor] > 1 ? 
-                            <p className="neighbor">{neighbor} ({props.neighbors[planet][neighbor]} days)</p> :
-                            <p className="neighbor">{neighbor} ({props.neighbors[planet][neighbor]} day)</p>
-                    ))}
-                </td>
-                <td className="hunterDays">{props.scenarioDays[planet]}</td>
+                    <td id={planet} className="planet">{planet}</td>
+                    <td id={planet+"-neighbors"} className="neighbor">
+                        {Object.keys(props.neighbors[planet]).map(neighbor => (
+                            props.neighbors[planet][neighbor] > 1 ? 
+                                <p id={neighbor} className="neighbor">{neighbor} ({props.neighbors[planet][neighbor]} days)</p> :
+                                <p id={neighbor} className="neighbor">{neighbor} ({props.neighbors[planet][neighbor]} day)</p>
+                        ))}
+                    </td>
+                    <td id={planet+"-hunter-days"} className="hunter-days">{props.scenarioDays[planet]}</td>
                 </tr>
             ))}
             </tbody>

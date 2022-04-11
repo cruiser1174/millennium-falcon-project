@@ -35,6 +35,12 @@
   margin: 2rem;
 }
 
+img {
+  border: 1px solid #FFE81F;
+  max-width: 100%;
+  height: auto;
+}
+
 /* SCENARIO SELECTION & UPLOAD */
 
 .upload-file-container {
@@ -45,6 +51,28 @@
   display: flex;
   justify-content: space-around;
 }
+
+.dropdown {
+  width: 11rem;
+  padding: 0.1rem;
+  margin: 15px;
+  font-size: 1rem;
+}
+
+.upload-input {
+  width: 15rem;
+  padding: 0.1rem;
+  margin: 15px;
+  font-size: 1rem;
+}
+
+.submit-button {
+  width: 10rem;
+  padding: 0.1rem;
+  margin: 15px;
+  font-size: 1rem;
+}
+
 
 .dropdown-container {
   display: flex;
@@ -72,14 +100,18 @@
   width: 30%;
 }
 
-.scenario-section {
+.scenario-detail {
+  font-weight: bold;
+}
+
+.center-col-flex {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.scenario-display {
+.row-wrap-flex {
   display: flex;
   width: 100%;
   justify-content: space-around;
@@ -111,27 +143,28 @@
   margin: 30px;
 }
 
+.odds-section {
+  overflow: hidden;
+  margin: 50px;
+}
+
 /* TABLES */
+
+.scenario-galaxy-table {
+  width: 60%;
+  margin: 0 1.5rem;
+  border: 4px solid white;
+  border-collapse: collapse;
+  border-style: solid;
+}
 
 td {
   text-align: left;
   padding: 0px 10px;
 }
 
-table, td {
+.scenario-galaxy-table td {
   border: 1px solid white;
-  border-collapse: collapse;
-  border-style: solid;
-}
-
-table {
-  border: 4px solid white;
-  
-}
-
-.scenario-galaxy-table {
-  width: 60%;
-  margin: 0 1.5rem;
 }
 
 #planets-col {
@@ -144,12 +177,4 @@ table {
 
 #hunters-col {
   width: 40%;
-}
-
-#route-table {
-  border-style: hidden;
-}
-
-#route-table td{
-  border-style: hidden;
 }
