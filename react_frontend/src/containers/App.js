@@ -118,7 +118,7 @@ function App() {
     return (
       <div className="App">
         <body className="App-body">
-            {/* */}
+            {/* section for selecting scenario and uploading file */}
           <SelectionSection 
             galaxies={Object.keys(galaxies)} 
             scenarios={Object.keys(scenarios)}
@@ -128,7 +128,7 @@ function App() {
             handleUpload={handleFileUpload}
             file={file}/> 
         
-
+            {/* section for displaying the selected scenario */}
           {(selectedGalaxy && selectedScenario) && (
             selectedScenarioPlanets.every(planet => selectedGalaxyPlanets.includes(planet)) ? 
               <ScenarioDisplay 
@@ -141,7 +141,7 @@ function App() {
                 timeLimit={scenarios[selectedScenario].countdown}/> :
               <CompareScenarioGalaxy galaxy={selectedGalaxy} galaxyPlanets={selectedGalaxyPlanets} scenario={selectedScenario} scenarioPlanets={selectedScenarioPlanets} />
           )}
-
+            {/* section for displaying the odds of success */}
           {!isNaN(parseInt(odds)) && (
             <Odds odds={odds} route={route} image={displayImage}/>
           )}    
