@@ -5,7 +5,8 @@ export function Odds(props) {
     
     return (
         <div className="odds-section">
-            <img id="odds-gif" src={props.image}/>
+            <h2 id="odds-title" className='jedi-title'>odds of success</h2>
+            <img id="odds-gif" src={props.image} alt="odds-gif"/>
             {props.odds === 0 ? 
                 <h3 id="odds-statement">There's a {props.odds}% chance of success</h3> :
                 <div className="successful-odds">

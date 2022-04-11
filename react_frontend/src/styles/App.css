@@ -18,7 +18,7 @@
   background-size: cover;
 }
 
-.App-header {
+.App-body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -72,6 +72,13 @@
   width: 30%;
 }
 
+.scenario-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .scenario-display {
   display: flex;
   width: 100%;
@@ -87,7 +94,7 @@
 
 .scenario-comparison {
   width: 55%;
-  margin: 50px;
+  margin: 20px;
 }
 
 .planet-list {
