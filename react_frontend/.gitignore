@@ -24,3 +24,12 @@ __pycache__
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+flask_backend/__pycache__/file_manipulation.cpython-310.pyc
+flask_backend/__pycache__/universe.cpython-310.pyc
+flask_backend/__pycache__/galaxy_api.cpython-310.pyc
+flask_backend/__pycache__/galaxy_structure.cpython-310.pyc
+flask_backend/__pycache__/millenium_falcon_mainframe.cpython-310.pyc
+*.pyc
+

@@ -1,7 +1,7 @@
 /* FONTS */
 @font-face {
   font-family: starjedi;
-  src: url(star-jedi_[allfont.net].ttf);
+  src: url(../external_fonts/star-jedi_[allfont.net].ttf);
 }
 
 /* GENERAL STYLES */
@@ -13,7 +13,7 @@
 
 .App {
   text-align: center;
-  background-image: url(space_background.jpg);
+  background-image: url(../images/space_background.jpg);
   background-position: center;
   background-size: cover;
 }
@@ -34,7 +34,6 @@
   color: #FFE81F;
   margin: 2rem;
 }
-
 
 /* SCENARIO SELECTION & UPLOAD */
 

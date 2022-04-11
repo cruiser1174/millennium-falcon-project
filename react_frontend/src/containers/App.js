@@ -1,18 +1,11 @@
-import '../App.css';
+import '../styles/App.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Dropdown } from '../components/Dropdown';
-import { SubmitScenarioForm } from '../components/SubmitScenarioForm';
-import { jsx } from '@emotion/react';
-import { ScenarioGalaxyTable } from '../components/ScenarioGalaxyTable';
 import { CompareScenarioGalaxy } from '../components/CompareScenarioGalaxy';
 import { Odds } from '../components/Odds';
-import { Route } from '../components/Route';
-import logo from '../logo.svg';
-import certainty from '../certainty.gif';
-import optimism from '../optimism.gif';
-import yehaw from '../yehaw.gif';
-import doomed from '../doomed.gif';
+import optimism from '../images/optimism.gif';
+import yehaw from '../images/yehaw.gif';
+import doomed from '../images/doomed.gif';
 import { SelectionSection } from '../components/SelectionSection';
 import { ScenarioDisplay } from '../components/ScenarioDisplay';
 
