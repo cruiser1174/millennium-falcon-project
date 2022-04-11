@@ -1,70 +1,14 @@
-
+/* FONTS */
 @font-face {
   font-family: starjedi;
   src: url(star-jedi_[allfont.net].ttf);
 }
 
+/* GENERAL STYLES */
+
 * {
   margin: 0;
   padding: 0;
-}
-
-.jedi-title {
-  font-family: starjedi;
-  color: #FFE81F;
-  margin: 2rem;
-}
-
-.upload-file-container {
-  margin: 0.5rem 4rem;
-}
-#planets-col {
-  width: 20%;
-}
-
-#neighbors-col {
-  width: 40%;
-}
-
-#hunters-col {
-  width: 40%;
-}
-
-.scenario-details {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: flex-start;
-  margin: 0rem 1.5rem;
-  width: 30%;
-}
-
-.scenario-galaxy-table {
-  width: 60%;
-  margin: 0 1.5rem;
-}
-
-.scenario-display {
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-  flex-flow: row wrap;
-}
-
-#odds-statement {
-  margin: 30px;
-}
-
-
-.comparison-container {
-  display: flex;
-  justify-content: center;
-  margin: 20px 20px;
-}
-
-.scenario-comparison {
-  width: 55%;
-  margin: 50px;
 }
 
 .App {
@@ -83,6 +27,19 @@
   font-size: calc(10px + 2vmin);
   color: white;
   background-color: rgba(40, 44, 52, 0.4);
+}
+
+.jedi-title {
+  font-family: starjedi;
+  color: #FFE81F;
+  margin: 2rem;
+}
+
+
+/* SCENARIO SELECTION & UPLOAD */
+
+.upload-file-container {
+  margin: 0.5rem 4rem;
 }
 
 .dropdown-box {
@@ -105,6 +62,51 @@
   margin-bottom: 2rem;
 }
 
+/* SCENARIO & GALAXY DISPLAY */
+
+.scenario-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin: 0rem 1.5rem;
+  width: 30%;
+}
+
+.scenario-display {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  flex-flow: row wrap;
+}
+
+.comparison-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 20px;
+}
+
+.scenario-comparison {
+  width: 55%;
+  margin: 50px;
+}
+
+.planet-list {
+  margin: 10px 50px;
+}
+
+.red-planet {
+  color: red;
+}
+
+/* ODDS SECTION */
+
+#odds-statement {
+  margin: 30px;
+}
+
+/* TABLES */
+
 td {
   text-align: left;
   padding: 0px 10px;
@@ -121,18 +123,27 @@ table {
   
 }
 
+.scenario-galaxy-table {
+  width: 60%;
+  margin: 0 1.5rem;
+}
+
+#planets-col {
+  width: 20%;
+}
+
+#neighbors-col {
+  width: 40%;
+}
+
+#hunters-col {
+  width: 40%;
+}
+
 #route-table {
   border-style: hidden;
 }
 
 #route-table td{
   border-style: hidden;
-}
-
-.planet-list {
-  margin: 10px 50px;
-}
-
-.red-planet {
-  color: red;
 }
