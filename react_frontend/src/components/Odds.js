@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import React from "react";
 import { Route } from "./Route";
 
@@ -10,7 +9,7 @@ export function Odds(props) {
             {props.odds === 0 ? 
                 <h3 id="odds-statement">There's a {props.odds}% chance of success</h3> :
                 <div className="successful-odds">
-                    <h3 id="odds-statement" css = {{margin: '30px'}}>There's a {props.odds}% chance of success using the following route:</h3>
+                    <h3 id="odds-statement">There's a {props.odds}% chance of success using the following route:</h3>
                     <Route route={props.route} />
                 </div>
             }

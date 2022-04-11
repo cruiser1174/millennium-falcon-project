@@ -1,18 +1,10 @@
-/** @jsxImportSource @emotion/react */
 import React from "react";
 import { ScenarioDetails } from "./ScenarioDetails";
 import { ScenarioGalaxyTable } from "./ScenarioGalaxyTable";
 
 export function ScenarioDisplay(props) {
-    const scenarioDisplayStyle = {
-        display: 'flex',
-        width: '100%',
-        justifyContent: 'space-around',
-        flexFlow: 'row wrap'
-    }
-
     return (
-        <div className="scenarioDisplay" css={scenarioDisplayStyle}>
+        <div className="scenario-display">
             <ScenarioDetails 
                 startPlanet={props.startPlanet} 
                 destinationPlanet={props.destinationPlanet} 

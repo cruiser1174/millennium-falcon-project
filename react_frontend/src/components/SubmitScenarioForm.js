@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import React from "react";
 
 export function SubmitScenarioForm(props) {
@@ -17,11 +16,11 @@ export function SubmitScenarioForm(props) {
       
     
     return (
-        <div css={{margin: '0.5rem 4rem'}}>
-            <h3>Upload a new scenario</h3>
-            <form onSubmit={handleSubmit}>
-                <input type="file" onChange={handleFileUpload}/>
-                <button type="submit">Upload</button>
+        <div className="upload-file-container">
+            <h3 id="upload-form-caption">Upload a new scenario</h3>
+            <form className="upload-form" onSubmit={handleSubmit}>
+                <input className="upload-input" type="file" onChange={handleFileUpload}/>
+                <button className="submit-button" type="submit">Upload</button>
             </form>
         </div>
     );

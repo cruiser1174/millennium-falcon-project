@@ -15,6 +15,58 @@
   margin: 2rem;
 }
 
+.upload-file-container {
+  margin: 0.5rem 4rem;
+}
+#planets-col {
+  width: 20%;
+}
+
+#neighbors-col {
+  width: 40%;
+}
+
+#hunters-col {
+  width: 40%;
+}
+
+.scenario-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin: 0rem 1.5rem;
+  width: 30%;
+}
+
+.scenario-galaxy-table {
+  width: 60%;
+  margin: 0 1.5rem;
+}
+
+.scenario-display {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  flex-flow: row wrap;
+}
+
+#odds-statement {
+  margin: 30px;
+}
+
+
+.comparison-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 20px;
+}
+
+.scenario-comparison {
+  width: 55%;
+  margin: 50px;
+}
+
 .App {
   text-align: center;
   background-image: url(space_background.jpg);
@@ -31,6 +83,26 @@
   font-size: calc(10px + 2vmin);
   color: white;
   background-color: rgba(40, 44, 52, 0.4);
+}
+
+.dropdown-box {
+  display: flex;
+  justify-content: space-around;
+}
+
+.dropdown-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0.5rem 4rem;
+}
+
+.selection-section {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  justify-content: space-around;
+  align-content: flex-start;
+  margin-bottom: 2rem;
 }
 
 td {
@@ -57,4 +129,10 @@ table {
   border-style: hidden;
 }
 
+.planet-list {
+  margin: 10px 50px;
+}
 
+.red-planet {
+  color: red;
+}

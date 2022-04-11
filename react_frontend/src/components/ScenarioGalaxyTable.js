@@ -1,13 +1,12 @@
-/** @jsxImportSource @emotion/react */
 import React from "react";
 
 export function ScenarioGalaxyTable(props) {
     return (
-        <table className="scenarioGalaxyTable" css={{width: '60%', margin: '0 1.5rem'}}>
+        <table id="scenario-comparison-table" className="scenario-galaxy-table">
             <colgroup>
-                <col className="planets" css={{width: '20%'}} />
-                <col className="neighbors" css={{width: '40%'}} />
-                <col className="hunters" css={{width: '40%'}} />
+                <col id="planets-col" className="planets"/>
+                <col id="neighbors-col" className="neighbors"/>
+                <col id="hunters-col" className="hunters"/>
             </colgroup>
 
             <thead>

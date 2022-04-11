@@ -8,7 +8,7 @@ export function Dropdown(props) {
 
     return (
         <div>
-            <select name="selectList" id="selectList" onChange={handleChange}>
+            <select className="dropdown" id={props.id + "-dropdown"} onChange={handleChange}>
                 <option selected disabled hidden>Select {props.id}</option>
                 {props.items.map(item => (
                     <option value={item}>{item}</option>

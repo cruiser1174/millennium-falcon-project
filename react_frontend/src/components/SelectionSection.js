@@ -25,17 +25,16 @@ export function SelectionSection(props) {
         justifyContent: 'space-around'
     }
 
-    const uploadStyle = {}
     return(
-        <div className="selectionSection" css={selectionStyle}>
-            <div className="dropdownBox" css={dropdownBoxStyle}>
+        <div className="selection-section">
+            <div className="dropdown-container">
                 <h3>Select a galaxy and scenario</h3>
-                <div className="dropdowns" css={dropdownStyle}>
+                <div className="dropdown-box">
                     <Dropdown id="galaxy" items={props.galaxies} onChange={props.updateSelectedGalaxy} />
                     <Dropdown id="scenario" items={props.scenarios} onChange={props.updateSelectedScenario} />
                 </div>
             </div>
-            <div className="upload" css={uploadStyle}>
+            <div className="upload">
                 <SubmitScenarioForm handleSubmit={props.handleSubmit} handleUpload={props.handleUpload} file={props.file}/>
             </div>
         </div>
