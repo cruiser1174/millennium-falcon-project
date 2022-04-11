@@ -1,101 +1,49 @@
 {
-  "countdown": 13,
+  "countdown": 11,
   "bounty_hunters": [
     {
-      "planet": "C",
-      "day": 8
-    },
-    {
-      "planet": "D",
-      "day": 8
-    },
-    {
-      "planet": "D",
-      "day": 9
-    },
-    {
-      "planet": "D",
-      "day": 10
-    },
-    {
-      "planet": "D",
-      "day": 11
-    },
-    {
-      "planet": "D",
-      "day": 12
-    },
-    {
-      "planet": "E",
-      "day": 8
-    },
-    {
-      "planet": "E",
-      "day": 9
-    },
-    {
-      "planet": "E",
-      "day": 10
-    },
-    {
-      "planet": "E",
-      "day": 11
-    },
-    {
-      "planet": "E",
-      "day": 12
-    },
-    {
-      "planet": "F",
-      "day": 8
-    },
-    {
-      "planet": "F",
-      "day": 9
-    },
-    {
-      "planet": "F",
-      "day": 10
-    },
-    {
-      "planet": "F",
-      "day": 11
-    },
-    {
-      "planet": "F",
-      "day": 12
-    },
-    {
-      "planet": "G",
+      "planet": "Hoth",
       "day": 6
     },
     {
-      "planet": "G",
-      "day": 7
+        "planet": "Hoth",
+        "day": 7
     },
     {
-      "planet": "G",
-      "day": 8
+        "planet": "Hoth",
+        "day": 8
     },
     {
-      "planet": "G",
-      "day": 9
+        "planet": "Hoth",
+        "day": 9
     },
     {
-      "planet": "G",
-      "day": 10
+        "planet": "Dagobah",
+        "day": 1
     },
     {
-      "planet": "G",
-      "day": 11
+        "planet": "Dagobah",
+        "day": 2
     },
     {
-      "planet": "G",
-      "day": 12
+        "planet": "Mustafar",
+        "day": 5
     },
     {
-      "planet": "G",
-      "day": 13
+        "planet": "Mustafar",
+        "day": 6
+    },
+    {
+        "planet": "Mustafar",
+        "day": 7
+    },
+    {
+        "planet": "Mustafar",
+        "day": 8
+    },
+    {
+        "planet": "Mustafar",
+        "day": 9
     }
   ]
 }

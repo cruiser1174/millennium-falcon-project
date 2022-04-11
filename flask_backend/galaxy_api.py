@@ -41,6 +41,7 @@ def send_galaxy():
     # get all of the scenarios (empire json files) and save intop python dicts which are 
     # added to the api return data
     api_data['scenarios'] = get_react_scenario_data(paths['scenarios'])
+    print(api_data)
     return api_data
 
 # api that receives a selected galaxy and scenario name, retrieves the relevant data from 
